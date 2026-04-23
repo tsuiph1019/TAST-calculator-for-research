@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<title>TAST Calculator &mdash; Version 4.1 (build 2026.04)</title>
-<meta name="description" content="TAST Calculator Version 4.1 (build 2026.04). Research and reference use only; not a medical device." />
+<title>TAST Calculator &mdash; Version 4.2 (build 2026.04)</title>
+<meta name="description" content="TAST Calculator Version 4.2 (build 2026.04). Research and reference use only; not a medical device." />
 <meta name="robots" content="noindex, nofollow" />
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.7.1/build/stlite.css" />
@@ -48,7 +48,7 @@
   <div class="spinner"></div>
   <div>Loading TAST Calculator...</div>
   <div class="sub">First load takes 20-40 seconds (downloads Python runtime). Subsequent loads use the browser cache.</div>
-  <div class="ver">Version 4.1 (build 2026.04) &middot; Research and reference use only</div>
+  <div class="ver">Version 4.2 (build 2026.04) &middot; Research and reference use only</div>
 </div>
 <div id="root"></div>
 
@@ -75,7 +75,7 @@ import joblib
 # -----------------------------------------------------------------------------
 # Tool metadata — surfaced in header badge and footer
 # -----------------------------------------------------------------------------
-APP_VERSION = "4.1"
+APP_VERSION = "4.2"
 APP_BUILD = "2026.04"
 APP_VERSION_DISPLAY = f"Version {APP_VERSION} · build {APP_BUILD}"
 
@@ -439,8 +439,8 @@ def parse_value(s: str, name: str, max_value: float = None) -> float:
 
 if "ast_text" not in st.session_state:
     st.session_state.ast_text = "23.00"
-if "tsi_text" not in st.session_state:
-    st.session_state.tsi_text = "82.00"
+if "tbi_text" not in st.session_state:
+    st.session_state.tbi_text = "82.00"
 
 
 def adjust_value(key: str, delta: float, max_value: float = None):
@@ -676,7 +676,7 @@ st.markdown(
     </div>
 </div>
 <div style="color: #667085; font-size: 1rem; margin: 0.35rem 0 1.1rem 0;">
-    AST &amp; TSI score &rarr; ensemble-predicted TAST (for MASH risk stratification research)
+    AST &amp; TBI score &rarr; ensemble-predicted TAST (for MASH risk stratification research)
 </div>
 """,
     unsafe_allow_html=True,
@@ -748,20 +748,20 @@ with col1:
 with col2:
     st.markdown("""
     <div class="input-card">
-        <div class="input-title">TSI Input</div>
-        <div class="input-subtitle">Type a value directly or use the buttons. Allowed range: <strong>0–100</strong>.</div>
+        <div class="input-title">TBI Input</div>
+        <div class="input-subtitle"><em>Tissue backscatter statistics imaging.</em> Type a value directly or use the buttons. Allowed range: <strong>0–100</strong>.</div>
     """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([8.8, 0.8, 0.8], gap="small")
 
     with c1:
-        st.text_input("TSI score (0–100)", key="tsi_text")
+        st.text_input("TBI score (0–100)", key="tbi_text")
 
     with c2:
-        st.button("\u2212", key="tsi_minus", on_click=adjust_value, args=("tsi_text", -1.0, 100.0))
+        st.button("\u2212", key="tbi_minus", on_click=adjust_value, args=("tbi_text", -1.0, 100.0))
 
     with c3:
-        st.button("\uff0b", key="tsi_plus", on_click=adjust_value, args=("tsi_text", 1.0, 100.0))
+        st.button("\uff0b", key="tbi_plus", on_click=adjust_value, args=("tbi_text", 1.0, 100.0))
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -770,9 +770,9 @@ with col2:
 # =============================================================================
 if st.button("Calculate TAST"):
     ast_value = parse_value(st.session_state.ast_text, "AST", max_value=1000.0)
-    tsi_value = parse_value(st.session_state.tsi_text, "TSI score", max_value=100.0)
+    tbi_value = parse_value(st.session_state.tbi_text, "TBI score", max_value=100.0)
 
-    X_new = np.array([[ast_value, tsi_value]], dtype=float)
+    X_new = np.array([[ast_value, tbi_value]], dtype=float)
     pred_rf = float(rf.predict(X_new)[0])
     pred_bag = float(bag.predict(X_new)[0])
     pred_svr = float(svr.predict(X_new)[0])

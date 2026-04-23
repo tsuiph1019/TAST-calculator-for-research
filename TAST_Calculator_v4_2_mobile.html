@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<title>TAST Calculator &mdash; Version 4.1 (build 2026.04, mobile)</title>
-<meta name="description" content="TAST Calculator Version 4.1 (build 2026.04, mobile). Research and reference use only; not a medical device." />
+<title>TAST Calculator &mdash; Version 4.2 (build 2026.04, mobile)</title>
+<meta name="description" content="TAST Calculator Version 4.2 (build 2026.04, mobile). Research and reference use only; not a medical device." />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="theme-color" content="#0f766e" />
 <link rel="stylesheet"
@@ -55,7 +55,7 @@
   <div class="spinner"></div>
   <div>Loading TAST Calculator...</div>
   <div class="sub">First load takes 20-40 seconds on Wi-Fi. Subsequent loads use the cache.</div>
-  <div class="ver">Version 4.1 (build 2026.04, mobile) &middot; Research and reference use only</div>
+  <div class="ver">Version 4.2 (build 2026.04, mobile) &middot; Research and reference use only</div>
 </div>
 <div id="root"></div>
 
@@ -86,7 +86,7 @@ import joblib
 # -----------------------------------------------------------------------------
 # Tool metadata
 # -----------------------------------------------------------------------------
-APP_VERSION = "4.1"
+APP_VERSION = "4.2"
 APP_BUILD = "2026.04"
 APP_EDITION = "mobile"
 APP_VERSION_DISPLAY = f"Version {APP_VERSION} · build {APP_BUILD} · {APP_EDITION}"
@@ -315,8 +315,8 @@ def parse_value(s: str, name: str, max_value: float = None) -> float:
 
 if "ast_text" not in st.session_state:
     st.session_state.ast_text = "23.00"
-if "tsi_text" not in st.session_state:
-    st.session_state.tsi_text = "82.00"
+if "tbi_text" not in st.session_state:
+    st.session_state.tbi_text = "82.00"
 
 
 def adjust_value(key: str, delta: float, max_value: float = None):
@@ -507,7 +507,7 @@ st.markdown(
     <div class="app-title">TAST Calculator</div>
 </div>
 <div class="app-subtitle">
-    AST &amp; TSI &rarr; ensemble TAST score (MASH risk research)
+    AST &amp; TBI &rarr; ensemble TAST score (MASH risk research)
 </div>
 <div style="display: inline-flex; align-items: center; gap: 0.35rem;
             background: linear-gradient(135deg, #138a7e 0%, #0f766e 100%);
@@ -590,9 +590,10 @@ with c3:
 st.markdown(
     """
 <div style="font-size: 1rem; font-weight: 700; color: #102134;
-            margin: 0.8rem 0 0.1rem 0;">TSI Input</div>
+            margin: 0.8rem 0 0.1rem 0;">TBI Input</div>
 <div style="font-size: 0.85rem; color: #667085; margin-bottom: 0.4rem;">
-    Type a value or use the buttons. Allowed range: <strong>0–100</strong>.
+    <em>Tissue backscatter statistics imaging.</em> Type a value or use the buttons.
+    Allowed range: <strong>0–100</strong>.
 </div>
 """,
     unsafe_allow_html=True,
@@ -600,11 +601,11 @@ st.markdown(
 
 c1, c2, c3 = st.columns([7.0, 1.2, 1.2], gap="small")
 with c1:
-    st.text_input("TSI score (0–100)", key="tsi_text")
+    st.text_input("TBI score (0–100)", key="tbi_text")
 with c2:
-    st.button("\u2212", key="tsi_minus", on_click=adjust_value, args=("tsi_text", -1.0, 100.0))
+    st.button("\u2212", key="tbi_minus", on_click=adjust_value, args=("tbi_text", -1.0, 100.0))
 with c3:
-    st.button("\uff0b", key="tsi_plus", on_click=adjust_value, args=("tsi_text", 1.0, 100.0))
+    st.button("\uff0b", key="tbi_plus", on_click=adjust_value, args=("tbi_text", 1.0, 100.0))
 
 
 # =============================================================================
@@ -614,9 +615,9 @@ st.markdown("<div style='height: 0.6rem'></div>", unsafe_allow_html=True)
 
 if st.button("Calculate TAST"):
     ast_value = parse_value(st.session_state.ast_text, "AST", max_value=1000.0)
-    tsi_value = parse_value(st.session_state.tsi_text, "TSI score", max_value=100.0)
+    tbi_value = parse_value(st.session_state.tbi_text, "TBI score", max_value=100.0)
 
-    X_new = np.array([[ast_value, tsi_value]], dtype=float)
+    X_new = np.array([[ast_value, tbi_value]], dtype=float)
     pred_rf = float(rf.predict(X_new)[0])
     pred_bag = float(bag.predict(X_new)[0])
     pred_svr = float(svr.predict(X_new)[0])
